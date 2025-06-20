@@ -1,0 +1,50 @@
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: cinemacidadedb
+    environment:
+      POSTGRES_DB: cinemacidade
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cinemanetwork
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus-forum-api
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - cinemanetwork
+  grafanacinema:
+    image: grafana/grafana
+    container_name: grafanacinema
+    volumes:
+      - ./grafana:/var/lib/grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - cinemanetwork
+    depends_on:
+      - prometheus
+volumes:
+  postgres_data:
+
+networks:
+  cinemanetwork:
+    driver: bridge

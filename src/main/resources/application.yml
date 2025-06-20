@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: cinemacidade
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cinemacidade
+    username: ${POSTGRES_USUARIO:postgres}
+    password: ${POSTGRES_SENHA:postgres}
+    hikari:
+      connection-init-sql: SET TIME ZONE 'UTC'
+      auto-commit: false
+      connection-timeout: 250
+      max-lifetime: 600000
+      maximum-pool-size: 20
+      minimum-idle: 10
+      pool-name: master
+  jpa:
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+      format_sql: true
+    properties:
+      "[hibernate.dialect]": org.hibernate.dialect.PostgreSQLDialect
+      "[hibernate.generate_statistics]": false
+      "[hibernate.connection.provider_disables_autocommit]": true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+management:
+  endpoints:
+    health:
+      show-details: always
+    web:
+      exposure:
+        include: [health, info, metrics, prometheus]
+  metrics:
+    enable:
+      jvm: true
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      slo:
+        http:
+          server:
+            requests: [50ms, 100ms, 200ms, 300ms, 500ms, 1s]
+    tags:
+      application: ${spring.application.name}

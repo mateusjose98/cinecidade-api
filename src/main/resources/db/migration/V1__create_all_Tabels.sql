@@ -1,0 +1,109 @@
+-- USERS
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  full_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  role VARCHAR(50) NOT NULL,
+  verified BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- MOVIES
+CREATE TABLE movies (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  synopsis TEXT NOT NULL,
+  rating VARCHAR(10) NOT NULL,
+  genre VARCHAR(100) NOT NULL,
+  duration_minutes INTEGER NOT NULL,
+  trailer_url VARCHAR(255),
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by_id INTEGER REFERENCES users(id)
+);
+
+-- CAST MEMBERS
+CREATE TABLE cast_members (
+  id SERIAL PRIMARY KEY,
+  actor_name VARCHAR(255) NOT NULL,
+  role_description VARCHAR(255),
+  movie_id INTEGER NOT NULL REFERENCES movies(id),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by_id INTEGER REFERENCES users(id)
+);
+
+-- ROOMS
+CREATE TABLE rooms (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  seat_count INTEGER NOT NULL,
+  room_type VARCHAR(50) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by_id INTEGER REFERENCES users(id)
+);
+
+-- SEATS
+CREATE TABLE seats (
+  id SERIAL PRIMARY KEY,
+  code VARCHAR(10) NOT NULL,
+  room_id INTEGER NOT NULL REFERENCES rooms(id),
+  status VARCHAR(20) NOT NULL
+);
+
+-- SESSIONS
+CREATE TABLE sessions (
+  id SERIAL PRIMARY KEY,
+  movie_id INTEGER NOT NULL REFERENCES movies(id),
+  room_id INTEGER NOT NULL REFERENCES rooms(id),
+  start_time TIMESTAMP NOT NULL,
+  end_time TIMESTAMP NOT NULL,
+  audio_type VARCHAR(20) NOT NULL, -- e.g., DUBBED, SUBTITLED
+  status VARCHAR(20) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_by_id INTEGER REFERENCES users(id)
+);
+
+-- PURCHASES
+CREATE TABLE purchases (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  session_id INTEGER NOT NULL REFERENCES sessions(id),
+  total_value DECIMAL(10, 2) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  reference_code VARCHAR(100) NOT NULL UNIQUE,
+  purchased_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- TICKETS
+CREATE TABLE tickets (
+  id SERIAL PRIMARY KEY,
+  purchase_id INTEGER NOT NULL REFERENCES purchases(id),
+  seat_id INTEGER NOT NULL REFERENCES seats(id),
+  category VARCHAR(50) NOT NULL, -- FULL, HALF, COURTESY, etc.
+  value DECIMAL(10, 2) NOT NULL,
+  status VARCHAR(20) NOT NULL -- USED, NOT_USED
+);
+
+-- PAYMENTS
+CREATE TABLE payments (
+  id SERIAL PRIMARY KEY,
+  purchase_id INTEGER NOT NULL REFERENCES purchases(id),
+  status VARCHAR(20) NOT NULL,
+  method VARCHAR(20) NOT NULL, -- PIX, CARD, BOLETO
+  paid_at TIMESTAMP,
+  amount_paid DECIMAL(10, 2) NOT NULL,
+  gateway_transaction_id VARCHAR(100)
+);
+
+-- WEBHOOK LOG (optional for payment tracking)
+CREATE TABLE webhook_logs (
+  id SERIAL PRIMARY KEY,
+  purchase_id INTEGER REFERENCES purchases(id),
+  event_type VARCHAR(100) NOT NULL,
+  payload TEXT NOT NULL,
+  received_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  processed_successfully BOOLEAN DEFAULT FALSE
+);
