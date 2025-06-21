@@ -13,7 +13,7 @@ class MovieTest {
 
     @Test
     void should_create_film_with_valid_data_using_update() {
-        Movie movie = Movie.update(
+        Movie movie = Movie.from(
                 1L,
                 "Interstellar",
                 "A team of explorers travel through a wormhole in space.",
@@ -32,7 +32,7 @@ class MovieTest {
     @Test
     void should_throw_exception_when_updating_with_invalid_data() {
         var exception = assertThrows(ValidationException.class, () -> {
-            Movie.update(
+            Movie.from(
                     null, // ID ausente
                     "",   // title
                     "Short", // synopsis

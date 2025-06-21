@@ -35,7 +35,7 @@ public class Movie {
     private Movie() {
     }
 
-    public static Movie update(
+    public static Movie from(
             Long id,
             String title,
             String synopsis,
@@ -55,6 +55,7 @@ public class Movie {
 
         return movie;
     }
+
 
     public static Movie create(
             Long id,

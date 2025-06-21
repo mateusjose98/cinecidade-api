@@ -1,6 +1,7 @@
 package br.com.cinecidade.cinecidade_api.application.movie;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class PageResult<T> {
 
@@ -10,6 +11,22 @@ public class PageResult<T> {
     private long totalElements;
     private int totalPages;
 
+    public PageResult(List<T> content, int page, int size, long totalElements, int totalPages) {
+
+        this.content = content;
+        this.page = page;
+        this.size = size;
+        this.totalElements = totalElements;
+        this.totalPages = totalPages;
+    }
+
+    public <R> PageResult<R> map(final Function<T, R> mapper) {
+        final List<R> aNewList = this.content.stream()
+                .map(mapper)
+                .toList();
+
+        return new PageResult<>(aNewList, getPage(), getSize(), getTotalElements(), getTotalPages());
+    }
 
     public List<T> getContent() {
         return content;
@@ -50,4 +67,6 @@ public class PageResult<T> {
     public void setTotalPages(int totalPages) {
         this.totalPages = totalPages;
     }
+
+
 }
