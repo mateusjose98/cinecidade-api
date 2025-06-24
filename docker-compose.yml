@@ -1,4 +1,3 @@
-
 services:
   postgres:
     image: postgres:16
@@ -13,6 +12,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - cinemanetwork
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus-forum-api
@@ -30,6 +30,7 @@ services:
       - "9090:9090"
     networks:
       - cinemanetwork
+
   grafanacinema:
     image: grafana/grafana
     container_name: grafanacinema
@@ -42,6 +43,25 @@ services:
       - cinemanetwork
     depends_on:
       - prometheus
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cinemacidadeapp
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/cinemacidade
+      - JAVA_TOOL_OPTIONS=-Xmx800m -Xms256m  # Heap abaixo do limite total
+    mem_limit: 1024m      # Limite total de RAM
+    cpus: 1.0            # Máximo core
+    depends_on:
+      - postgres
+    networks:
+      - cinemanetwork
+
 volumes:
   postgres_data:
 

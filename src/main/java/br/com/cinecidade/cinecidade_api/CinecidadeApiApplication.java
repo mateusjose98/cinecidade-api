@@ -10,4 +10,5 @@ public class CinecidadeApiApplication {
 		SpringApplication.run(CinecidadeApiApplication.class, args);
 	}
 
+
 }

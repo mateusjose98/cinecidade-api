@@ -72,4 +72,9 @@ public class MovieJpaCommandAdapter implements MovieCommandPort {
                 pageResult.getTotalPages()
         );
     }
+
+    @Override
+    public Movie getOne(Integer id) {
+        return repository.findById(Long.valueOf(id)).map(MovieEntity::toDomain).orElseThrow();
+    }
 }

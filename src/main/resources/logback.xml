@@ -1,0 +1,24 @@
+<configuration scan="true">
+
+    <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active" />
+
+    <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
+            <jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+                <prettyPrint>true</prettyPrint>
+            </jsonFormatter>
+
+            <timestampFormat>yyyy-MM-dd HH:mm:ss.SSS</timestampFormat>
+            <timestampFormatTimezone>America/Sao_Paulo</timestampFormatTimezone>
+
+            <customField>
+                <fieldName>activeProfile</fieldName>
+                <value>${ACTIVE_PROFILE}</value>
+            </customField>
+        </layout>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="json"/>
+    </root>
+</configuration>

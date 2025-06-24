@@ -1,4 +1,13 @@
+
+server:
+  tomcat:
+    threads:
+      max: 10
+
 spring:
+  threads:
+    virtual:
+      enabled: true
   application:
     name: cinemacidade
   datasource:
@@ -8,14 +17,14 @@ spring:
     hikari:
       connection-init-sql: SET TIME ZONE 'UTC'
       auto-commit: false
-      connection-timeout: 250
+      connection-timeout: 1000
       max-lifetime: 600000
-      maximum-pool-size: 20
-      minimum-idle: 10
+      maximum-pool-size: 30
+      minimum-idle: 15
       pool-name: master
   jpa:
     open-in-view: false
-    show-sql: true
+#    show-sql: true
     hibernate:
       ddl-auto: none
       format_sql: true

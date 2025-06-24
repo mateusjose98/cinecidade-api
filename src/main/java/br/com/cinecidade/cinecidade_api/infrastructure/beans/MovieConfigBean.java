@@ -1,8 +1,10 @@
 package br.com.cinecidade.cinecidade_api.infrastructure.beans;
 
 import br.com.cinecidade.cinecidade_api.application.movie.usecase.CreateMovieUseCase;
+import br.com.cinecidade.cinecidade_api.application.movie.usecase.GetOneMovieUseCase;
 import br.com.cinecidade.cinecidade_api.application.movie.usecase.SearchMovieUseCase;
 import br.com.cinecidade.cinecidade_api.application.movie.usecase.impl.DefaultCreateMovieUseCase;
+import br.com.cinecidade.cinecidade_api.application.movie.usecase.impl.DefaultGetOneMovieUseCase;
 import br.com.cinecidade.cinecidade_api.application.movie.usecase.impl.DefaultSearchMovieUseCase;
 import br.com.cinecidade.cinecidade_api.domain.movie.port.MovieCommandPort;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,11 @@ public class MovieConfigBean {
     @Bean
     public SearchMovieUseCase searchMovieUseCase(MovieCommandPort movieCommandPort) {
         return new DefaultSearchMovieUseCase(movieCommandPort);
+    }
+
+    @Bean
+    public GetOneMovieUseCase getOneMovieUseCase(MovieCommandPort movieCommandPort) {
+        return new DefaultGetOneMovieUseCase(movieCommandPort);
     }
 
 }

@@ -11,4 +11,5 @@ public interface MovieCommandPort {
     void deleteById(Long id);
     Movie update(Movie movie);
     PageResult<Movie> findAll(SearchQuery query);
+    Movie getOne(Integer id);
 }
